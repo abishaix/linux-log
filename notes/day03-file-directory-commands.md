@@ -71,6 +71,21 @@ ls [kf]*             # files starting with k or f
 
 ---
 
+## Hidden Files
+
+Any file or directory starting with `.` is hidden — `ls` won't show it by default.
+
+```bash
+ls -la              # show all files including hidden
+touch .hiddenfile   # create a hidden file
+mkdir .hiddendir    # create a hidden directory
+
+# To unhide a file — just rename it (remove the dot):
+mv .hiddenfile hiddenfile
+```
+
+---
+
 ## `cp` — Copy Files
 
 ```bash
@@ -137,6 +152,41 @@ ls -l | grep ^l     # list only symlinks
 
 ---
 
+## Inodes
+
+The kernel assigns every file a unique ID number called an **inode**. The inode stores all the file's properties (permissions, owner, size, timestamps) — everything except the filename.
+
+```bash
+ls -i filename          # show inode number of a file
+ls -i /home/student/soft
+```
+
+Two files with the same inode = same underlying data on disk. Two files with different inodes = different data. This is how you tell a soft link from a hard link.
+
+---
+
+## `du` — Disk Usage
+
+```bash
+du -h filename          # size of a file in human-readable format (KB, MB)
+du -h s1                # size of the link itself (tiny — just a pointer)
+du -h /home/student/soft    # size of the actual file
+```
+
+`-h` = human readable. Without it you get raw block counts.
+
+---
+
+## Reading `ls -l` Output — Block Count
+
+When you run `ls -l` you see a line like:
+```
+total 8
+```
+This means 8 blocks are allocated. 1 block = 512 bytes, so `total 8` = 4096 bytes (4 KB) of actual disk space used.
+
+---
+
 ## Soft Links (Symbolic Links) — Shortcuts
 
 A soft link is a pointer to another file. Like a Windows shortcut.
@@ -163,6 +213,8 @@ Soft link breaks when original is deleted. Different inodes.
 ## Hard Links — Backup
 
 A hard link is another name for the same file. Both point to the same inode (same data on disk).
+
+> Hard links work on **files only** — you cannot create a hard link to a directory.
 
 ```bash
 ln /home/student/hard H1        # create hard link H1
